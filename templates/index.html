@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block title %}{{ t('nav_home') }}{% endblock %}
+{% block main_class %}full-bleed{% endblock %}
+
+{% block content %}
+<section class="splash-intro" id="splashIntro" aria-label="Opening">
+  <canvas id="splashCanvas" aria-hidden="true"></canvas>
+  <div class="splash-glow" aria-hidden="true"></div>
+  <h1 class="splash-word" id="splashWord" aria-hidden="true">THISDL</h1>
+  <p class="splash-hint" id="splashHint">{{ 'Scroll down' if lang == 'en' else '向下滑动' }}</p>
+</section>
+
+<section class="hero hero-home" id="home">
+  <div class="hero-grid">
+    <div class="reveal hero-copy">
+      <p class="hero-slogan">{{ t('site_tagline') }}</p>
+      <h1 class="hero-title">{{ t('hero_title_1') }}<span class="grad">{{ t('hero_title_2') }}</span></h1>
+      <p class="lead">{{ t('hero_desc') }}</p>
+    </div>
+    <div class="museum-card reveal">
+      <p class="label">{{ t('site_tagline') }}</p>
+      <h2>{{ t('site_name') }}</h2>
+      <p>{{ t('hero_desc') }}</p>
+      <div class="fact-grid">
+        <div class="fact"><strong>{{ stats.total }}</strong><span>{{ t('stat_works') }}</span></div>
+        <div class="fact"><strong>{{ stats.authors }}</strong><span>{{ t('stat_authors') }}</span></div>
+        <div class="fact"><strong>{{ stats.pending }}</strong><span>{{ t('stat_pending') }}</span></div>
+      </div>
+      {% if featured %}
+      <a href="{{ url_for('work_detail', work_id=featured[0].id) }}" class="ghost-btn">{{ t('view_detail') }}</a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% if gallery_works %}
+<section class="carousel-section reveal" id="carousel">
+  <div class="wrap">
+    <p class="label">{{ t('marquee_title') }}</p>
+    <h2 class="title">{{ t('marquee_title') }}</h2>
+    <div class="carousel" id="homeCarousel">
+      <button type="button" class="arrow carousel-prev" aria-label="Previous">‹</button>
+      <div class="slide" id="slideBox">
+        <div class="slide-art" id="slideArt"></div>
+        <div class="slide-content">
+          <p class="label" id="slideField"></p>
+          <h3 id="slideTitle"></h3>
+          <p id="slideDesc"></p>
+          <div class="stack" id="slideStack"></div>
+          <div class="actions">
+            <a href="#" class="primary-btn" id="slideDetailLink">{{ t('view_detail') }}</a>
+            <button type="button" class="ghost-btn carousel-next-btn">{{ 'Next' if lang == 'en' else '下一件作品' }}</button>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="arrow carousel-next" aria-label="Next">›</button>
+    </div>
+    <div class="dots" id="carouselDots"></div>
+  </div>
+</section>
+<script id="carouselData" type="application/json">
+[
+{% for work in gallery_works %}
+  {"id":{{ work.id }},"title":{{ work.title|tojson }},"summary":{{ work.summary|tojson }},"category":{{ cat_label(work.category)|tojson }},"author":{{ work.author_name|tojson }},"cover":{{ url_for('static', filename=work.cover_image)|tojson }},"tags":{{ work.tag_list|tojson }}}{% if not loop.last %},{% endif %}
+{% endfor %}
+]
+</script>
+{% endif %}
+
+{% if featured %}
+<section class="section reveal">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="label">{{ t('featured_title') }}</p>
+        <h2 class="title">{{ t('featured_title') }}</h2>
+      </div>
+      <a href="{{ url_for('archive') }}" class="ghost-btn">{{ t('view_all') }} →</a>
+    </div>
+    <div class="cards">
+      {% for work in featured %}
+      <a href="{{ url_for('work_detail', work_id=work.id) }}" class="project-card featured">
+        <div class="visual has-cover" style="background-image: linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.55)), url('{{ url_for('static', filename=work.cover_image) }}');">
+          <div class="badge-row">
+            <span class="badge">{{ cat_label(work.category) }}</span>
+          </div>
+        </div>
+        <div class="body">
+          <h3>{{ work.title }}</h3>
+          <p class="meta">{{ work.author_name }} · {{ work.grade }}</p>
+          <p class="desc">{{ work.summary[:100] }}{% if work.summary|length > 100 %}…{% endif %}</p>
+          {% if work.tag_list %}
+          <div class="stack">{% for tg in work.tag_list[:4] %}<span>{{ tg }}</span>{% endfor %}</div>
+          {% endif %}
+          <div class="card-actions">
+            <span class="small-btn">{{ t('view_detail') }}</span>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section reveal">
+  <div class="wrap">
+    <p class="label">{{ t('how_title') }}</p>
+    <h2 class="title">{{ t('how_title') }}</h2>
+    <div class="cards" style="margin-top:28px">
+      <article class="project-card">
+        <div class="body">
+          <p class="label">01</p>
+          <h3>{{ t('step1_title') }}</h3>
+          <p class="desc">{{ t('step1_desc') }}</p>
+        </div>
+      </article>
+      <article class="project-card">
+        <div class="body">
+          <p class="label">02</p>
+          <h3>{{ t('step2_title') }}</h3>
+          <p class="desc">{{ t('step2_desc') }}</p>
+        </div>
+      </article>
+      <article class="project-card">
+        <div class="body">
+          <p class="label">03</p>
+          <h3>{{ t('step3_title') }}</h3>
+          <p class="desc">{{ t('step3_desc') }}</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

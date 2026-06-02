@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}{{ t('submission_detail') }} - {{ work.title }}{% endblock %}
+
+{% block content %}
+<section class="page-section reveal work-detail-section">
+  <div class="wrap">
+    <a href="{{ url_for('my_submissions') }}" class="back-link">← {{ t('my_submissions') }}</a>
+    <p class="label">{{ t('submission_detail') }}</p>
+    <p style="margin-bottom:20px">
+      {% if work.status == 'pending' %}<span class="status-pending">{{ t('status_pending') }}</span>
+      {% elif work.status == 'approved' %}<span class="status-approved">{{ t('status_approved') }}</span>
+      {% else %}<span class="status-rejected">{{ t('status_rejected') }}</span>{% endif %}
+    </p>
+    {% if work.status == 'rejected' %}
+    <div class="reject-box" style="margin-bottom:24px">
+      <h3>{{ t('your_reject_reason') }}</h3>
+      <p>{{ work.reject_reason or t('no_reject_reason') }}</p>
+    </div>
+    {% endif %}
+    {% include "partials/work_detail_body.html" %}
+  </div>
+</section>
+{% endblock %}

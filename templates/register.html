@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}{{ t('register_title') }}{% endblock %}
+
+{% block content %}
+<section class="auth-page">
+  <div class="auth-panel reveal">
+    <p class="label">{{ t('nav_register') }}</p>
+    <h1>{{ t('register_title') }}</h1>
+    <p>{{ t('register_desc') }}</p>
+    <form method="post">
+      <div class="field">
+        <label for="username">{{ t('username') }}</label>
+        <input type="text" id="username" name="username" required autocomplete="username">
+      </div>
+      <div class="field">
+        <label for="email">{{ t('email') }}</label>
+        <input type="email" id="email" name="email" required autocomplete="email">
+      </div>
+      <div class="field">
+        <label for="password">{{ t('password') }}</label>
+        <input type="password" id="password" name="password" required autocomplete="new-password" minlength="6">
+      </div>
+      <div class="field">
+        <label for="password_confirm">{{ t('password_confirm') }}</label>
+        <input type="password" id="password_confirm" name="password_confirm" required autocomplete="new-password" minlength="6">
+      </div>
+      <button type="submit" class="primary-btn" style="width:100%;margin-top:8px">{{ t('register_btn') }}</button>
+    </form>
+    <p style="margin-top:20px;color:var(--muted)">{{ t('has_account') }} <a href="{{ url_for('user_login') }}" style="color:#c084fc">{{ t('nav_login') }}</a></p>
+    <a href="{{ url_for('index') }}" class="back-link" style="margin-top:16px">← {{ t('back_home') }}</a>
+  </div>
+</section>
+{% endblock %}

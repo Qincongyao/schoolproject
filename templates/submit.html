@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+{% block title %}{{ t('submit_title') }}{% endblock %}
+
+{% block content %}
+<section class="page-section reveal">
+  <div class="wrap submit-wrap">
+    <p class="label">{{ t('nav_submit') }}</p>
+    <h2 class="title">{{ t('submit_title') }}</h2>
+    <p class="desc submit-intro">{{ t('submit_desc') }}</p>
+
+    <form method="post" enctype="multipart/form-data" id="submitForm" class="submit-form-stack">
+
+      <!-- BASIC INFO -->
+      <div class="panel">
+        <h3 class="submit-section-title">{{ t('section_banner') }} &middot; {{ t('section_basic_info') }}</h3>
+        <div class="field">
+          <label for="title">{{ t('label_title') }} <span class="required">{{ t('required') }}</span></label>
+          <input type="text" id="title" name="title" required maxlength="120">
+        </div>
+        <div class="field">
+          <label for="project_time">{{ t('label_project_time') }} <span class="required">{{ t('required') }}</span></label>
+          <input type="text" id="project_time" name="project_time" required maxlength="64" placeholder="{{ t('project_time_hint') }}">
+        </div>
+        <div class="form-row-2">
+          <div class="field">
+            <label for="author_name">{{ t('label_name') }} <span class="required">{{ t('required') }}</span></label>
+            <input type="text" id="author_name" name="author_name" required maxlength="64">
+          </div>
+          <div class="field">
+            <label for="grade">{{ t('label_grade') }} <span class="required">{{ t('required') }}</span></label>
+            <input type="text" id="grade" name="grade" required maxlength="64">
+          </div>
+        </div>
+        <div class="field">
+          <label for="supervisor">{{ t('label_supervisor') }} <span class="optional">({{ t('optional') }})</span></label>
+          <input type="text" id="supervisor" name="supervisor" maxlength="64">
+        </div>
+        <div class="form-row-2">
+          <div class="field">
+            <label for="category">{{ t('label_category') }} <span class="required">{{ t('required') }}</span></label>
+            <select id="category" name="category" required>
+              <option value="">{{ t('select_category') }}</option>
+              {% for key, label in categories %}
+              <option value="{{ key }}">{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="field">
+            <label for="tags">{{ t('label_keywords') }} <span class="required">{{ t('required') }}</span></label>
+            <input type="text" id="tags" name="tags" required maxlength="256" placeholder="{{ t('tags_hint') }}">
+          </div>
+        </div>
+      </div>
+
+      <!-- SUMMARY (BILINGUAL) -->
+      <div class="panel">
+        <h3 class="submit-section-title">{{ t('section_summary') }}</h3>
+        <div class="lang-tabs">
+          <button type="button" class="lang-tab active" data-lang="zh" data-group="summary">中文</button>
+          <button type="button" class="lang-tab" data-lang="en" data-group="summary">English</button>
+        </div>
+        <div class="field lang-field active" data-lang="zh" data-group="summary">
+          <textarea id="summary" name="summary" required maxlength="2000" rows="4" placeholder="中文简介"></textarea>
+        </div>
+        <div class="field lang-field" data-lang="en" data-group="summary">
+          <textarea id="summary_en" name="summary_en" maxlength="2000" rows="4" placeholder="English introduction (optional)"></textarea>
+        </div>
+      </div>
+
+      <!-- TECHNICAL (BILINGUAL) -->
+      <div class="panel">
+        <h3 class="submit-section-title">{{ t('section_technical') }}</h3>
+        <div class="lang-tabs">
+          <button type="button" class="lang-tab active" data-lang="zh" data-group="technical">中文</button>
+          <button type="button" class="lang-tab" data-lang="en" data-group="technical">English</button>
+        </div>
+        <div class="field lang-field active" data-lang="zh" data-group="technical">
+          <textarea id="technical_angle" name="technical_angle" required rows="5" placeholder="技术角度描述（中文）"></textarea>
+        </div>
+        <div class="field lang-field" data-lang="en" data-group="technical">
+          <textarea id="technical_angle_en" name="technical_angle_en" rows="5" placeholder="Technical perspective in English (optional)"></textarea>
+        </div>
+      </div>
+
+      <!-- PROJECT IMAGES -->
+      <div class="panel">
+        <h3 class="submit-section-title">{{ t('section_project_images') }}</h3>
+        <p class="hint">{{ t('banner_hint') }} &middot; {{ t('image_caption_hint') }}</p>
+        <div class="field">
+          <div class="upload-zone" id="uploadZone">
+            <input type="file" name="images" id="images" accept="image/*" multiple required>
+            <p>{{ t('upload_hint') }}</p>
+            <p class="hint">{{ t('upload_hint2') }}</p>
+          </div>
+          <div class="preview-list" id="previewList"></div>
+          <div id="captionFields" class="caption-fields"></div>
+        </div>
+      </div>
+
+      <!-- VIDEO (BILINGUAL) -->
+      <div class="panel">
+        <h3 class="submit-section-title">{{ t('section_video') }}</h3>
+        <div class="field">
+          <label for="video_link">{{ t('label_video') }} <span class="required">{{ t('required') }}</span></label>
+          <input type="url" id="video_link" name="video_link" required maxlength="512" placeholder="https://">
+        </div>
+        <div class="lang-tabs">
+          <button type="button" class="lang-tab active" data-lang="zh" data-group="video">中文</button>
+          <button type="button" class="lang-tab" data-lang="en" data-group="video">English</button>
+        </div>
+        <div class="field lang-field active" data-lang="zh" data-group="video">
+          <label for="video_intro">{{ t('label_video_intro') }} <span class="optional">({{ t('optional') }})</span></label>
+          <textarea id="video_intro" name="video_intro" rows="3" placeholder="视频说明（中文）"></textarea>
+        </div>
+        <div class="field lang-field" data-lang="en" data-group="video">
+          <label for="video_intro_en">Video Description <span class="optional">({{ t('optional') }})</span></label>
+          <textarea id="video_intro_en" name="video_intro_en" rows="3" placeholder="Video description in English"></textarea>
+        </div>
+      </div>
+
+      <!-- MILESTONES (BILINGUAL) -->
+      <div class="panel">
+        <h3 class="submit-section-title">{{ t('section_milestones') }}</h3>
+        <p class="hint">{{ t('milestone_min_error') }}</p>
+        <div class="lang-tabs">
+          <button type="button" class="lang-tab active" data-lang="zh" data-group="milestones">中文</button>
+          <button type="button" class="lang-tab" data-lang="en" data-group="milestones">English</button>
+        </div>
+        <div class="lang-group active" data-lang="zh" data-group="milestones">
+          {% for n in range(1, 4) %}
+          <div class="milestone-group">
+            <p class="label">{{ t('milestone_phase', n=n) }}{% if n <= 2 %} <span class="required">{{ t('required') }}</span>{% endif %}</p>
+            <div class="field">
+              <label for="milestone_title_{{ n }}">{{ t('label_milestone_title') }}</label>
+              <input type="text" id="milestone_title_{{ n }}" name="milestone_title_{{ n }}" maxlength="120" {% if n <= 2 %}required{% endif %}>
+            </div>
+            <div class="field">
+              <label for="milestone_desc_{{ n }}">{{ t('label_milestone_desc') }}</label>
+              <textarea id="milestone_desc_{{ n }}" name="milestone_desc_{{ n }}" rows="2"></textarea>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="lang-group" data-lang="en" data-group="milestones">
+          {% for n in range(1, 4) %}
+          <div class="milestone-group">
+            <p class="label">Phase {{ n }} <span class="optional">({{ t('optional') }})</span></p>
+            <div class="field">
+              <label for="milestone_title_{{ n }}_en">Phase Title</label>
+              <input type="text" id="milestone_title_{{ n }}_en" name="milestone_title_{{ n }}_en" maxlength="120">
+            </div>
+            <div class="field">
+              <label for="milestone_desc_{{ n }}_en">Phase Description</label>
+              <textarea id="milestone_desc_{{ n }}_en" name="milestone_desc_{{ n }}_en" rows="2"></textarea>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- AUTHOR REFLECTION (BILINGUAL) -->
+      <div class="panel">
+        <h3 class="submit-section-title">{{ t('section_reflection') }}</h3>
+        <div class="lang-tabs">
+          <button type="button" class="lang-tab active" data-lang="zh" data-group="reflection">中文</button>
+          <button type="button" class="lang-tab" data-lang="en" data-group="reflection">English</button>
+        </div>
+        <div class="field lang-field active" data-lang="zh" data-group="reflection">
+          <textarea id="author_reflection" name="author_reflection" required rows="4" placeholder="作者心声（中文）"></textarea>
+        </div>
+        <div class="field lang-field" data-lang="en" data-group="reflection">
+          <textarea id="author_reflection_en" name="author_reflection_en" rows="4" placeholder="Author's reflection in English (optional)"></textarea>
+        </div>
+      </div>
+
+      <!-- ACTIVITIES (BILINGUAL) -->
+      <div class="panel">
+        <h3 class="submit-section-title">{{ t('section_activities') }}</h3>
+        <div class="lang-tabs">
+          <button type="button" class="lang-tab active" data-lang="zh" data-group="activities">中文</button>
+          <button type="button" class="lang-tab" data-lang="en" data-group="activities">English</button>
+        </div>
+        <div class="field lang-field active" data-lang="zh" data-group="activities">
+          <textarea id="activities_awards" name="activities_awards" required rows="3" placeholder="相关活动/获奖（中文）"></textarea>
+        </div>
+        <div class="field lang-field" data-lang="en" data-group="activities">
+          <textarea id="activities_awards_en" name="activities_awards_en" rows="3" placeholder="Activities / Awards in English (optional)"></textarea>
+        </div>
+        <div class="field">
+          <label>{{ t('label_activity_images') }} <span class="optional">({{ t('optional') }})</span></label>
+          <div class="upload-zone" id="activityUploadZone">
+            <input type="file" name="activity_images" id="activity_images" accept="image/*" multiple>
+            <p class="hint">{{ t('activity_images_hint') }}</p>
+          </div>
+          <div class="preview-list" id="activityPreviewList"></div>
+        </div>
+      </div>
+
+      <!-- RESOURCES -->
+      <div class="panel">
+        <h3 class="submit-section-title">{{ t('section_resources') }}</h3>
+        <div class="field">
+          <label for="github_link">{{ t('label_github_repo') }} <span class="required">{{ t('required') }}</span></label>
+          <input type="url" id="github_link" name="github_link" required maxlength="512" placeholder="https://github.com/...">
+        </div>
+        <div class="field">
+          <label for="ppt_link">{{ t('label_ppt') }} <span class="optional">({{ t('optional') }})</span></label>
+          <input type="url" id="ppt_link" name="ppt_link" maxlength="512" placeholder="https://">
+        </div>
+        <div class="field">
+          <label for="paper_link">{{ t('label_paper') }} <span class="optional">({{ t('optional') }})</span></label>
+          <input type="url" id="paper_link" name="paper_link" maxlength="512" placeholder="https://">
+        </div>
+        <div class="field">
+          <label for="report_links">{{ t('label_reports') }} <span class="optional">({{ t('optional') }})</span></label>
+          <textarea id="report_links" name="report_links" rows="3" placeholder="{{ t('report_links_hint') }}"></textarea>
+        </div>
+      </div>
+
+      <!-- AUTHOR INTERNAL -->
+      <div class="panel">
+        <h3 class="submit-section-title">{{ t('section_author_internal') }}</h3>
+        <div class="form-row-2">
+          <div class="field">
+            <label for="student_id">{{ t('label_student_id') }} <span class="required">{{ t('required') }}</span></label>
+            <input type="text" id="student_id" name="student_id" required maxlength="32">
+          </div>
+          <div class="field">
+            <label for="contact">{{ t('label_contact') }} <span class="required">{{ t('required') }}</span></label>
+            <input type="text" id="contact" name="contact" required maxlength="120" placeholder="{{ t('contact_hint') }}">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-notice"><p>{{ t('submit_notice') }}</p></div>
+      <button type="submit" class="primary-btn submit-submit-btn">{{ t('submit_btn') }}</button>
+    </form>
+  </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.lang-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      var group = this.dataset.group;
+      document.querySelectorAll('.lang-tab[data-group="' + group + '"]').forEach(function(t) { t.classList.remove('active'); });
+      this.classList.add('active');
+      var lang = this.dataset.lang;
+      document.querySelectorAll('.lang-field[data-group="' + group + '"], .lang-group[data-group="' + group + '"]').forEach(function(el) {
+        el.classList.toggle('active', el.dataset.lang === lang);
+      });
+    });
+  });
+});
+</script>
+
+<style>
+.lang-tabs { display: flex; gap: 4px; margin-bottom: 12px; }
+.lang-tab { padding: 6px 18px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); border-radius: 4px; cursor: pointer; font-size: 0.82rem; font-family: inherit; transition: all 0.2s; }
+.lang-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.lang-tab:hover:not(.active) { border-color: var(--border-light); color: var(--text-primary); }
+.lang-field, .lang-group { display: none; }
+.lang-field.active, .lang-group.active { display: block; }
+</style>
+{% endblock %}

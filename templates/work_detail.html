@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ work.title }}{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/purple-detail.css') }}">
+{% endblock %}
+
+{% block content %}
+  {% include "partials/work_detail_body.html" %}
+
+    {% if similar %}
+    <div class="similar-block">
+      <p class="label">{{ t('similar_by_tag') }}</p>
+      <h2 class="title similar-title">{{ t('similar_by_tag') }}</h2>
+      <div class="cards">
+        {% for s in similar %}
+        <a href="{{ url_for('work_detail', work_id=s.id) }}" class="project-card">
+          <div class="visual has-cover" style="background-image:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.55)), url('{{ url_for('static', filename=s.cover_image) }}');">
+            <div class="badge-row"><span class="badge">{{ cat_label(s.category) }}</span></div>
+          </div>
+          <div class="body">
+            <h3>{{ s.title }}</h3>
+            <p class="meta">{{ s.author_name }}</p>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+{% endblock %}

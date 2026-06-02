@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}{{ t('review_page_title') }} - {{ work.title }}{% endblock %}
+
+{% block content %}
+<section class="page-section reveal work-detail-section">
+  <div class="wrap">
+    <a href="{{ url_for('admin_dashboard') }}" class="back-link">← {{ t('admin_dashboard') }}</a>
+    <p class="label">Review</p>
+    <h2 class="title">{{ t('review_page_title') }}</h2>
+    <p style="margin:12px 0 24px">
+      <span class="badge">{{ cat_label(work.category) }}</span>
+      {% if work.is_hidden %}<span class="badge">{{ t('hidden_badge') }}</span>{% endif %}
+      <span class="status-{{ work.status }}">{{ work.status }}</span>
+    </p>
+
+    {% with show_contact=true %}{% include "partials/work_detail_body.html" %}{% endwith %}
+
+    <div class="review-actions-panel panel" style="margin-top:32px">
+      {% if work.status == 'rejected' and work.reject_reason %}
+      <div class="reject-box" style="margin-bottom:16px">
+        <h3>{{ t('reject_reason') }}</h3>
+        <p>{{ work.reject_reason }}</p>
+      </div>
+      {% endif %}
+
+      <form method="post" id="reviewForm">
+        <div class="field">
+          <label for="admin_note">{{ t('admin_note') }}</label>
+          <textarea id="admin_note" name="admin_note" rows="2">{{ work.admin_note }}</textarea>
+        </div>
+
+        {% if work.status == 'pending' %}
+        <div class="field">
+          <label for="reject_reason">{{ t('reject_reason') }} <span class="required">{{ t('required') }}</span></label>
+          <textarea id="reject_reason" name="reject_reason" rows="3" placeholder="{{ t('reject_reason_hint') }}">{{ work.reject_reason }}</textarea>
+        </div>
+        <div class="review-actions">
+          <button type="submit" name="action" value="approve" class="primary-btn"
+                  data-confirm="{{ t('confirm_approve') }}">{{ t('approve_btn') }}</button>
+          <button type="submit" name="action" value="reject" class="danger-btn"
+                  data-confirm="{{ t('confirm_reject') }}" data-require-reason="true">{{ t('reject_btn') }}</button>
+        </div>
+        {% endif %}
+
+        {% if work.status == 'approved' %}
+        <div class="review-actions">
+          {% if work.is_hidden %}
+          <button type="submit" name="action" value="unhide" class="primary-btn"
+                  data-confirm="{{ t('confirm_unhide') }}">{{ t('unhide_btn') }}</button>
+          {% else %}
+          <button type="submit" name="action" value="hide" class="ghost-btn"
+                  data-confirm="{{ t('confirm_hide') }}">{{ t('hide_btn') }}</button>
+          {% endif %}
+        </div>
+        {% endif %}
+
+        <div class="review-actions" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--line)">
+          <button type="submit" name="action" value="delete" class="danger-btn"
+                  data-confirm="{{ t('confirm_delete') }}">{{ t('delete_btn') }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.getElementById('reviewForm').addEventListener('submit', function(e) {
+  const btn = e.submitter;
+  if (!btn) return;
+  if (btn.dataset.requireReason === 'true') {
+    const reason = document.getElementById('reject_reason').value.trim();
+    if (!reason) {
+      e.preventDefault();
+      alert('{{ t("reject_reason_required") }}');
+      return;
+    }
+  }
+  if (btn.dataset.confirm && !confirm(btn.dataset.confirm)) {
+    e.preventDefault();
+  }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}{{ t('archive_title') }}{% endblock %}
+
+{% block content %}
+<section class="page-section reveal">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="label">{{ t('nav_archive') }}</p>
+        <h2 class="title">{{ t('archive_title') }}</h2>
+        <p class="desc" style="margin-top:12px;max-width:640px">{{ t('archive_desc') }}</p>
+      </div>
+      <form class="searchbox" method="get" action="{{ url_for('archive') }}">
+        <input type="search" name="q" value="{{ q }}" placeholder="{{ t('search_placeholder') }}">
+        {% if tag %}<input type="hidden" name="tag" value="{{ tag }}">{% endif %}
+        {% if category %}<input type="hidden" name="category" value="{{ category }}">{% endif %}
+        <button type="submit" class="primary-btn" style="padding:10px 14px">{{ t('search_btn') }}</button>
+      </form>
+    </div>
+
+    <div class="tabs">
+      <a href="{{ url_for('archive', q=q, tag=tag) }}" class="tab {% if not category %}active{% endif %}">{{ t('all_categories') }}</a>
+      {% for key, label in categories %}
+      <a href="{{ url_for('archive', category=key, q=q, tag=tag) }}"
+         class="tab {% if category == key %}active{% endif %}">{{ label }}</a>
+      {% endfor %}
+    </div>
+
+    {% if tag %}
+    <p class="filter-tag">{{ t('tags') }}: <strong>{{ tag }}</strong>
+      <a href="{{ url_for('archive', q=q, category=category) }}" class="ghost-btn" style="padding:6px 12px;font-size:12px">×</a>
+    </p>
+    {% endif %}
+
+    {% if works %}
+    <p class="label" style="margin-bottom:20px">{{ t('result_count', n=works|length) }}</p>
+    <div class="cards">
+      {% for work in works %}
+      <article class="project-card">
+        <a href="{{ url_for('work_detail', work_id=work.id) }}" class="visual has-cover" style="display:block;background-image:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.55)), url('{{ url_for('static', filename=work.cover_image) }}');">
+          <div class="badge-row"><span class="badge">{{ cat_label(work.category) }}</span></div>
+        </a>
+        <div class="body">
+          <h3><a href="{{ url_for('work_detail', work_id=work.id) }}">{{ work.title }}</a></h3>
+          <p class="meta">{{ work.author_name }} · {{ work.grade }} · {{ work.created_at.strftime('%Y-%m-%d') }}</p>
+          <p class="desc">{{ work.summary[:100] }}{% if work.summary|length > 100 %}…{% endif %}</p>
+          {% if work.tag_list %}
+          <div class="stack">
+            {% for tg in work.tag_list[:5] %}
+            <a href="{{ url_for('archive', tag=tg, q=q, category=category) }}"><span>{{ tg }}</span></a>
+            {% endfor %}
+          </div>
+          {% endif %}
+          <div class="card-actions">
+            <a href="{{ url_for('work_detail', work_id=work.id) }}" class="small-btn">{{ t('view_detail') }}</a>
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-note">
+      <p>{{ t('no_results') }}</p>
+      {% if q or category or tag %}
+      <a href="{{ url_for('archive') }}" class="ghost-btn" style="margin-top:16px;display:inline-block">{{ t('clear_filters') }}</a>
+      {% else %}
+      <a href="{{ url_for('submit') }}" class="primary-btn" style="margin-top:16px;display:inline-block">{{ t('be_first') }}</a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

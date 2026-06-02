@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="{{ 'zh-CN' if lang == 'zh' else 'en' }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{{ t('site_name') }}{% endblock %} | {{ t('site_tagline') }}</title>
+  <meta name="theme-color" content="#020103">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/spectrum.css') }}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a href="{{ url_for('index') }}" class="brand">
+      <div class="logo">CG</div>
+      <div>
+        <strong>{{ t('site_name') }}</strong>
+        <span>{{ t('site_tagline') }}</span>
+      </div>
+    </a>
+    <div class="topbar-right">
+      <nav class="nav nav-main" aria-label="Main">
+        <a href="{{ url_for('index') }}" class="nav-btn {% if request.endpoint == 'index' %}active{% endif %}">{{ t('nav_home') }}</a>
+        <div class="nav-item has-dropdown" data-dropdown>
+          <a href="{{ url_for('archive') }}" class="nav-btn {% if request.endpoint == 'archive' %}active{% endif %}">{{ t('nav_archive') }} <span class="caret" aria-hidden="true">▾</span></a>
+          <div class="dropdown" role="menu">
+            {% for key, label in categories %}
+            <a class="drop-link {% if request.args.get('category') == key %}active{% endif %}"
+               href="{{ url_for('archive', category=key) }}" role="menuitem">{{ label }} <span>→</span></a>
+            {% endfor %}
+            <a class="drop-link {% if request.endpoint == 'archive' and not request.args.get('category') %}active{% endif %}"
+               href="{{ url_for('archive') }}" role="menuitem">{{ t('all_categories') }} <span>→</span></a>
+          </div>
+        </div>
+        {% if is_admin %}
+        <a href="{{ url_for('admin_dashboard') }}" class="nav-btn {% if request.endpoint and request.endpoint.startswith('admin') %}active{% endif %}">{{ t('admin_dashboard') }}</a>
+        {% endif %}
+      </nav>
+      <div class="topbar-actions">
+        <a href="{{ url_for('set_lang', lang_code='en' if lang == 'zh' else 'zh') }}" class="ghost-btn">{{ 'EN' if lang == 'zh' else '中' }}</a>
+        {% if is_admin %}
+        <a href="{{ url_for('admin_logout') }}" class="ghost-btn">{{ t('nav_logout') }}</a>
+        {% elif is_user %}
+        <a href="{{ url_for('my_submissions') }}" class="ghost-btn">{{ t('nav_my_submissions') }}</a>
+        <a href="{{ url_for('user_logout') }}" class="ghost-btn">{{ t('nav_logout') }}</a>
+        {% else %}
+        <a href="{{ url_for('user_login') }}" class="ghost-btn">{{ t('nav_login') }}</a>
+        {% endif %}
+        {% if not is_admin %}
+        <a href="{{ url_for('submit') }}" class="primary-btn">{{ t('nav_submit') }}</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-wrap">
+      {% for category, message in messages %}
+      <div class="flash flash-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  {% endwith %}
+
+  <main class="{% block main_class %}{% endblock %}">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <p>{{ t('footer_text') }}</p>
+    <p>
+      {% if is_admin %}
+      <a href="{{ url_for('admin_dashboard') }}">{{ t('admin_dashboard') }}</a>
+      {% else %}
+      <a href="{{ url_for('submit') }}">{{ t('footer_submit') }}</a>
+      {% if not is_user %}
+      · <a href="{{ url_for('admin_login') }}">{{ t('footer_admin') }}</a>
+      {% endif %}
+      {% endif %}
+    </p>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

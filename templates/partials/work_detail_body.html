@@ -1,0 +1,340 @@
+<article class="purple-detail">
+  <a href="{{ url_for('archive') }}" class="pd-back">&larr; {{ t('work_detail_back') }}</a>
+
+  {% set marker = namespace(val=0) %}
+
+  <!-- HEADER IMAGE -->
+  {% set marker.val = marker.val + 1 %}
+  <section class="pd-section">
+    <div class="pd-marker">{{ '%02d' % marker.val }}</div>
+    <h2 class="pd-section-title">{{ t('section_banner') }}</h2>
+    {% if work.cover_image %}
+    <div class="pd-banner" style="background-image:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.55)),url('{{ url_for('static', filename=work.cover_image) }}');"></div>
+    {% else %}
+    <div class="pd-banner pd-banner-placeholder">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+      <span>Header Image</span>
+    </div>
+    {% endif %}
+  </section>
+
+  <!-- BASIC INFO -->
+  {% set marker.val = marker.val + 1 %}
+  <section class="pd-section">
+    <div class="pd-marker">{{ '%02d' % marker.val }}</div>
+    <h2 class="pd-section-title">{{ t('section_basic_info') }}</h2>
+    <dl class="pd-info-grid">
+      <div class="pd-info-item">
+        <dt>{{ t('label_title') }}</dt>
+        <dd>{{ work.title }}</dd>
+      </div>
+      {% if work.project_time %}
+      <div class="pd-info-item">
+        <dt>{{ t('label_project_time') }}</dt>
+        <dd>{{ work.project_time }}</dd>
+      </div>
+      {% endif %}
+      <div class="pd-info-item">
+        <dt>{{ t('label_name') }}</dt>
+        <dd>{{ work.author_name }}</dd>
+      </div>
+      <div class="pd-info-item">
+        <dt>{{ t('label_grade') }}</dt>
+        <dd>{{ work.grade }}</dd>
+      </div>
+      {% if work.supervisor %}
+      <div class="pd-info-item">
+        <dt>{{ t('label_supervisor') }}</dt>
+        <dd>{{ work.supervisor }}</dd>
+      </div>
+      {% endif %}
+      {% if work.tag_list %}
+      <div class="pd-info-item pd-info-full">
+        <dt>{{ t('label_keywords') }}</dt>
+        <dd>{% for tag in work.tag_list %}<span class="pd-tag">{{ tag }}</span>{% endfor %}</dd>
+      </div>
+      {% endif %}
+    </dl>
+  </section>
+
+  <!-- SUMMARY (BILINGUAL) -->
+  {% set marker.val = marker.val + 1 %}
+  <section class="pd-section">
+    <div class="pd-marker">{{ '%02d' % marker.val }}</div>
+    <h2 class="pd-section-title">{{ t('section_summary') }}</h2>
+    {% if work.summary_en %}
+    <nav class="pd-lang-tabs">
+      <button type="button" class="pd-lang-tab active" data-lang="zh" data-group="summary">中文</button>
+      <button type="button" class="pd-lang-tab" data-lang="en" data-group="summary">English</button>
+    </nav>
+    <div class="pd-lang-content active" data-lang="zh" data-group="summary">
+      <div class="pd-prose">{{ work.summary }}</div>
+    </div>
+    <div class="pd-lang-content" data-lang="en" data-group="summary">
+      <div class="pd-prose" style="border-left:3px solid var(--p-accent);">{{ work.summary_en }}</div>
+    </div>
+    {% else %}
+    <div class="pd-prose">{{ work.summary }}</div>
+    {% endif %}
+  </section>
+
+  <!-- TECHNICAL (BILINGUAL) -->
+  {% if work.technical_angle %}
+  {% set marker.val = marker.val + 1 %}
+  <section class="pd-section">
+    <div class="pd-marker">{{ '%02d' % marker.val }}</div>
+    <h3 class="pd-subsection-title">{{ t('section_technical') }}</h3>
+    {% if work.technical_angle_en %}
+    <nav class="pd-lang-tabs">
+      <button type="button" class="pd-lang-tab active" data-lang="zh" data-group="tech">中文</button>
+      <button type="button" class="pd-lang-tab" data-lang="en" data-group="tech">English</button>
+    </nav>
+    <div class="pd-lang-content active" data-lang="zh" data-group="tech">
+      <ul class="pd-tech-list">
+        {% for line in work.technical_angle.strip().split('\n') %}{% if line.strip() %}
+        <li><span class="pd-tech-num">{{ '%02d' % loop.index }}</span>{{ line.strip() }}</li>
+        {% endif %}{% endfor %}
+      </ul>
+    </div>
+    <div class="pd-lang-content" data-lang="en" data-group="tech">
+      <ul class="pd-tech-list">
+        {% for line in work.technical_angle_en.strip().split('\n') %}{% if line.strip() %}
+        <li><span class="pd-tech-num">{{ '%02d' % loop.index }}</span>{{ line.strip() }}</li>
+        {% endif %}{% endfor %}
+      </ul>
+    </div>
+    {% else %}
+    <ul class="pd-tech-list">
+      {% for line in work.technical_angle.strip().split('\n') %}{% if line.strip() %}
+      <li><span class="pd-tech-num">{{ '%02d' % loop.index }}</span>{{ line.strip() }}</li>
+      {% endif %}{% endfor %}
+    </ul>
+    {% endif %}
+  </section>
+  {% endif %}
+
+  <!-- PROJECT IMAGES -->
+  {% if work.image_items %}
+  {% set marker.val = marker.val + 1 %}
+  <section class="pd-section">
+    <div class="pd-marker">{{ '%02d' % marker.val }}</div>
+    <h3 class="pd-subsection-title">{{ t('section_project_images') }}</h3>
+    <div class="pd-image-grid">
+      {% for img, cap in work.image_items %}
+      <figure>
+        <div class="pd-image-frame">
+          <img src="{{ url_for('static', filename=img) }}" alt="{{ cap or work.title }}" loading="lazy">
+        </div>
+        {% if cap %}<figcaption class="pd-image-caption">{{ cap }}</figcaption>{% endif %}
+      </figure>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- VIDEO -->
+  {% if work.video_link %}
+  {% set marker.val = marker.val + 1 %}
+  <section class="pd-section">
+    <div class="pd-marker">{{ '%02d' % marker.val }}</div>
+    <h3 class="pd-subsection-title">{{ t('section_video') }}</h3>
+    {% if work.video_intro_en %}
+    <nav class="pd-lang-tabs">
+      <button type="button" class="pd-lang-tab active" data-lang="zh" data-group="video">中文</button>
+      <button type="button" class="pd-lang-tab" data-lang="en" data-group="video">English</button>
+    </nav>
+    <div class="pd-lang-content active" data-lang="zh" data-group="video">
+      {% if work.video_intro %}<div class="pd-prose" style="margin-bottom:16px;">{{ work.video_intro }}</div>{% endif %}
+    </div>
+    <div class="pd-lang-content" data-lang="en" data-group="video">
+      {% if work.video_intro_en %}<div class="pd-prose" style="margin-bottom:16px;border-left:3px solid var(--p-accent);">{{ work.video_intro_en }}</div>{% endif %}
+    </div>
+    {% else %}
+    {% if work.video_intro %}<div class="pd-prose" style="margin-bottom:16px;">{{ work.video_intro }}</div>{% endif %}
+    {% endif %}
+    {% if video_embed_url(work.video_link) %}
+    <div class="pd-video-wrap">
+      <iframe src="{{ video_embed_url(work.video_link) }}" title="{{ work.title }}" allowfullscreen loading="lazy"></iframe>
+    </div>
+    {% else %}
+    <a href="{{ work.video_link }}" class="pd-video-link" target="_blank" rel="noopener">{{ t('video_link') }} ↗</a>
+    {% endif %}
+  </section>
+  {% endif %}
+
+  <!-- MILESTONES (BILINGUAL) -->
+  {% set milestones_zh = work.milestone_list %}
+  {% set milestones_en = work.milestone_list_en %}
+  {% if milestones_zh %}
+  {% set marker.val = marker.val + 1 %}
+  <section class="pd-section">
+    <div class="pd-marker">{{ '%02d' % marker.val }}</div>
+    <h2 class="pd-section-title">{{ t('section_milestones') }}</h2>
+    {% if milestones_en and milestones_en != milestones_zh %}
+    <nav class="pd-lang-tabs">
+      <button type="button" class="pd-lang-tab active" data-lang="zh" data-group="milestones">中文</button>
+      <button type="button" class="pd-lang-tab" data-lang="en" data-group="milestones">English</button>
+    </nav>
+    <div class="pd-lang-content active" data-lang="zh" data-group="milestones">
+      <div class="pd-timeline">
+        <div class="pd-timeline-line"></div>
+        {% for m in milestones_zh %}
+        <div class="pd-milestone">
+          <div class="pd-milestone-dot"></div>
+          <div class="pd-milestone-content">
+            <div class="pd-milestone-phase">{{ m.title }}</div>
+            {% if m.desc %}<div class="pd-milestone-desc">{{ m.desc }}</div>{% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="pd-lang-content" data-lang="en" data-group="milestones">
+      <div class="pd-timeline">
+        <div class="pd-timeline-line"></div>
+        {% for m in milestones_en %}
+        <div class="pd-milestone">
+          <div class="pd-milestone-dot"></div>
+          <div class="pd-milestone-content">
+            <div class="pd-milestone-phase">{{ m.title }}</div>
+            {% if m.desc %}<div class="pd-milestone-desc">{{ m.desc }}</div>{% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% else %}
+    <div class="pd-timeline">
+      <div class="pd-timeline-line"></div>
+      {% for m in milestones_zh %}
+      <div class="pd-milestone">
+        <div class="pd-milestone-dot"></div>
+        <div class="pd-milestone-content">
+          <div class="pd-milestone-phase">{{ m.title }}</div>
+          {% if m.desc %}<div class="pd-milestone-desc">{{ m.desc }}</div>{% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </section>
+  {% endif %}
+
+  <!-- AUTHOR REFLECTION (BILINGUAL) -->
+  {% if work.author_reflection %}
+  {% set marker.val = marker.val + 1 %}
+  <section class="pd-section">
+    <div class="pd-marker">{{ '%02d' % marker.val }}</div>
+    <h2 class="pd-section-title">{{ t('section_reflection') }}</h2>
+    {% if work.author_reflection_en %}
+    <nav class="pd-lang-tabs">
+      <button type="button" class="pd-lang-tab active" data-lang="zh" data-group="reflection">中文</button>
+      <button type="button" class="pd-lang-tab" data-lang="en" data-group="reflection">English</button>
+    </nav>
+    <div class="pd-lang-content active" data-lang="zh" data-group="reflection">
+      <blockquote class="pd-quote">
+        <div class="pd-quote-mark">&ldquo;</div>
+        <p>{{ work.author_reflection }}</p>
+      </blockquote>
+    </div>
+    <div class="pd-lang-content" data-lang="en" data-group="reflection">
+      <blockquote class="pd-quote" style="border-left:3px solid var(--p-accent);">
+        <div class="pd-quote-mark">&ldquo;</div>
+        <p>{{ work.author_reflection_en }}</p>
+      </blockquote>
+    </div>
+    {% else %}
+    <blockquote class="pd-quote">
+      <div class="pd-quote-mark">&ldquo;</div>
+      <p>{{ work.author_reflection }}</p>
+    </blockquote>
+    {% endif %}
+  </section>
+  {% endif %}
+
+  <!-- ACTIVITIES (BILINGUAL) -->
+  {% if work.activities_awards or work.activity_image_list %}
+  {% set marker.val = marker.val + 1 %}
+  <section class="pd-section">
+    <div class="pd-marker">{{ '%02d' % marker.val }}</div>
+    <h2 class="pd-section-title">{{ t('section_activities') }}</h2>
+    {% if work.activities_awards_en %}
+    <nav class="pd-lang-tabs">
+      <button type="button" class="pd-lang-tab active" data-lang="zh" data-group="activities">中文</button>
+      <button type="button" class="pd-lang-tab" data-lang="en" data-group="activities">English</button>
+    </nav>
+    <div class="pd-lang-content active" data-lang="zh" data-group="activities">
+      {% if work.activities_awards %}<p class="pd-award-text">{{ work.activities_awards }}</p>{% endif %}
+    </div>
+    <div class="pd-lang-content" data-lang="en" data-group="activities">
+      {% if work.activities_awards_en %}<p class="pd-award-text" style="border-left:3px solid var(--p-accent);padding-left:16px;">{{ work.activities_awards_en }}</p>{% endif %}
+    </div>
+    {% else %}
+    {% if work.activities_awards %}<p class="pd-award-text">{{ work.activities_awards }}</p>{% endif %}
+    {% endif %}
+    {% if work.activity_image_list %}
+    <div class="pd-award-gallery">
+      {% for img in work.activity_image_list %}
+      <div class="pd-award-img">
+        <img src="{{ url_for('static', filename=img) }}" alt="" loading="lazy">
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </section>
+  {% endif %}
+
+  <!-- RESOURCES -->
+  {% if work.github_link or work.ppt_link or work.paper_link or work.report_link_list %}
+  {% set marker.val = marker.val + 1 %}
+  <section class="pd-section">
+    <div class="pd-marker">{{ '%02d' % marker.val }}</div>
+    <h2 class="pd-section-title">{{ t('section_resources') }}</h2>
+    <div class="pd-resource-grid">
+      {% if work.github_link %}
+      <a href="{{ work.github_link }}" class="pd-resource-card" target="_blank" rel="noopener">
+        <span class="pd-resource-icon">&#8599;</span>
+        <span class="pd-resource-label">{{ t('label_github_repo') }}</span>
+        <span class="pd-resource-url">{{ work.github_link }}</span>
+      </a>
+      {% endif %}
+      {% if work.ppt_link %}
+      <a href="{{ work.ppt_link }}" class="pd-resource-card" target="_blank" rel="noopener">
+        <span class="pd-resource-icon">&#8599;</span>
+        <span class="pd-resource-label">{{ t('label_ppt') }}</span>
+        <span class="pd-resource-url">{{ work.ppt_link }}</span>
+      </a>
+      {% endif %}
+      {% if work.paper_link %}
+      <a href="{{ work.paper_link }}" class="pd-resource-card" target="_blank" rel="noopener">
+        <span class="pd-resource-icon">&#8599;</span>
+        <span class="pd-resource-label">{{ t('label_paper') }}</span>
+        <span class="pd-resource-url">{{ work.paper_link }}</span>
+      </a>
+      {% endif %}
+      {% for link in work.report_link_list %}
+      <a href="{{ link }}" class="pd-resource-card" target="_blank" rel="noopener">
+        <span class="pd-resource-icon">&#8599;</span>
+        <span class="pd-resource-label">{{ t('label_reports') }}</span>
+        <span class="pd-resource-url">{{ link }}</span>
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+</article>
+
+<script>
+(function() {
+  document.querySelectorAll('.pd-lang-tab').forEach(function(t) {
+    t.addEventListener('click', function() {
+      var g = this.dataset.group;
+      document.querySelectorAll('.pd-lang-tab[data-group="' + g + '"]').forEach(function(x) { x.classList.remove('active'); });
+      this.classList.add('active');
+      document.querySelectorAll('.pd-lang-content[data-group="' + g + '"]').forEach(function(x) {
+        x.classList.toggle('active', x.dataset.lang === this.dataset.lang);
+      }.bind(this));
+    });
+  });
+})();
+</script>

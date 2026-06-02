@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}{{ t('login_title') }}{% endblock %}
+
+{% block content %}
+<section class="auth-page">
+  <div class="auth-panel reveal">
+    <p class="label">{{ t('nav_login') }}</p>
+    <h1>{{ t('login_title') }}</h1>
+    <p>{{ t('login_desc') }}</p>
+    <form method="post">
+      <div class="field">
+        <label for="username">{{ t('username') }}</label>
+        <input type="text" id="username" name="username" required autocomplete="username">
+      </div>
+      <div class="field">
+        <label for="password">{{ t('password') }}</label>
+        <input type="password" id="password" name="password" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="primary-btn" style="width:100%;margin-top:8px">{{ t('login_btn') }}</button>
+    </form>
+    <p style="margin-top:20px;color:var(--muted)">{{ t('no_account') }} <a href="{{ url_for('register') }}" style="color:#c084fc">{{ t('nav_register') }}</a></p>
+    <a href="{{ url_for('index') }}" class="back-link" style="margin-top:16px">← {{ t('back_home') }}</a>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}滚动画廊{% endblock %}
+
+{% block content %}
+<section class="page-hero compact">
+  <div class="container">
+    <h1>作品滚动画廊</h1>
+    <p>自动滚动的作品展示带，感受校园创作的流动之美</p>
+  </div>
+</section>
+
+{% if works %}
+<section class="gallery-section">
+  <div class="marquee-wrapper">
+    <div class="marquee-track" id="marqueeTrack">
+      {% for work in works %}
+      <a href="{{ url_for('work_detail', work_id=work.id) }}" class="marquee-item">
+        <img src="{{ url_for('static', filename=work.cover_image) }}" alt="{{ work.title }}">
+        <div class="marquee-overlay">
+          <h3>{{ work.title }}</h3>
+          <span>{{ work.author_name }}</span>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="container gallery-grid-section">
+    <h2>全部作品</h2>
+    <div class="gallery-grid">
+      {% for work in works %}
+      <a href="{{ url_for('work_detail', work_id=work.id) }}" class="gallery-grid-item">
+        <img src="{{ url_for('static', filename=work.cover_image) }}" alt="{{ work.title }}" loading="lazy">
+        <div class="gallery-grid-info">
+          <h3>{{ work.title }}</h3>
+          <span>{{ work.category_label }}</span>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% else %}
+<section class="section empty-hint">
+  <div class="container">
+    <p>画廊暂无作品，审核通过后将在此展示。</p>
+    <a href="{{ url_for('submit') }}" class="btn btn-primary">去投稿</a>
+  </div>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', initMarquee);
+</script>
+{% endblock %}

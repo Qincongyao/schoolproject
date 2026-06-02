@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}{{ t('admin_dashboard') }}{% endblock %}
+
+{% block content %}
+<section class="page-section reveal">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="label">Admin</p>
+        <h2 class="title">{{ t('admin_dashboard') }}</h2>
+        <p class="desc" style="margin-top:10px">{{ t('admin_dashboard_desc') }}</p>
+        <p class="hint" style="margin-top:8px">{{ t('click_to_review') }}</p>
+      </div>
+      <a href="{{ url_for('admin_logout') }}" class="ghost-btn">{{ t('nav_logout') }}</a>
+    </div>
+
+    <div class="panel" style="margin-top:32px">
+      <h3>{{ t('pending_review') }} <span class="badge">{{ pending|length }}</span></h3>
+      {% if pending %}
+      <div class="admin-table-wrap" style="margin-top:16px">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>{{ t('label_title') }}</th>
+              <th>{{ t('label_name') }}</th>
+              <th>{{ t('label_category') }}</th>
+              <th>{{ t('submitted_at') }}</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for work in pending %}
+            <tr>
+              <td><img class="thumb" src="{{ url_for('static', filename=work.cover_image) }}" alt=""></td>
+              <td>{{ work.title }}</td>
+              <td>{{ work.author_name }}</td>
+              <td>{{ cat_label(work.category) }}</td>
+              <td>{{ work.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+              <td><a href="{{ url_for('admin_review', work_id=work.id) }}" class="primary-btn" style="padding:8px 14px;font-size:13px">{{ t('review_btn') }}</a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="empty-note">{{ t('no_pending') }}</p>
+      {% endif %}
+    </div>
+
+    <div class="panel" style="margin-top:24px">
+      <h3>{{ t('recent_approved') }}</h3>
+      {% if approved %}
+      <div class="admin-table-wrap" style="margin-top:16px">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>{{ t('label_title') }}</th>
+              <th>{{ t('label_name') }}</th>
+              <th>{{ t('tags') }}</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for work in approved %}
+            <tr>
+              <td>{{ work.title }}{% if work.is_hidden %} <span class="badge">{{ t('hidden_badge') }}</span>{% endif %}</td>
+              <td>{{ work.author_name }}</td>
+              <td>{{ work.tags or '-' }}</td>
+              <td>{{ work.status }}</td>
+              <td><a href="{{ url_for('admin_review', work_id=work.id) }}" class="ghost-btn" style="padding:8px 14px;font-size:13px">{{ t('review_btn') }}</a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="empty-note">{{ t('no_approved') }}</p>
+      {% endif %}
+    </div>
+
+    {% if rejected %}
+    <div class="panel" style="margin-top:24px">
+      <h3>{{ t('recent_rejected') }}</h3>
+      <div class="admin-table-wrap" style="margin-top:16px">
+        <table class="admin-table">
+          <tbody>
+            {% for work in rejected %}
+            <tr>
+              <td>{{ work.title }}</td>
+              <td>{{ work.author_name }}</td>
+              <td><a href="{{ url_for('admin_review', work_id=work.id) }}" class="ghost-btn" style="padding:8px 14px;font-size:13px">{{ t('review_btn') }}</a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
